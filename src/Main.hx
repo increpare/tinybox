@@ -373,7 +373,7 @@ class Main {
 	}
 
 	function MusicPlayNote(a:Int,b:Float,c:Float,d:Float){
-		//!!!!
+		untyped playNote(a,b,c,d);
 	}
 
 	var lCounter=0;

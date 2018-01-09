@@ -1023,7 +1023,6 @@ function cacheSeed(seed, vol){
 }
 
 function playNote(seed,frequency,length,volume){
-  if (unitTesting) return;
   var sound = cacheNote(seed,frequency,length,volume);
   sound.play();
 }

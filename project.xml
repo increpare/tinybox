@@ -40,7 +40,10 @@
   <haxedef name="windowheight" value="150" />
   <haxedef name="startfullscreen" value="${startfullscreen}" />
 	
+  <dependency name="js/rng.js" />
   <dependency name="js/sfxr.js" />
+
+  <template path="js/rng.js" rename="js/rng.js" if="html5" />
   <template path="js/sfxr.js" rename="js/sfxr.js" if="html5" />
 
 	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
