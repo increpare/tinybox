@@ -197,6 +197,7 @@ class Main {
 	}
 
 	function makeRLE(s:String):String{
+
 	  var result ="";
 	  var lastChar=s.charAt(0);
 	  var lastCharCount=1;
@@ -379,7 +380,7 @@ class Main {
 
 	function MusicPlayNote(a:Int,b:Float,c:Float,d:Float){
 		#if js
-		untyped playNote(a,b,c,d);
+		untyped playNote(a,b,c,d/4);
 		#end
 	}
 
@@ -619,7 +620,7 @@ class Main {
 	    if (collide==3){
 	      if (dat.notes.length>1){
 	        dat.notes.splice(i,1);
-	        if (selectedSequence==i && selectedSequence>0){
+	        if (selectedSequence>=i && selectedSequence>0){
 	          selectedSequence--;
 	        }
 	        break;
