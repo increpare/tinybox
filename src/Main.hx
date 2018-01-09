@@ -1,5 +1,8 @@
 import haxegon.*;
+
+#if js
 import js.Browser;
+#end
 
 class Main {
 	
@@ -369,11 +372,15 @@ class Main {
 
 
 	function GamePrompt(description:String,text:String):String{
+		#if js
 		return Browser.window.prompt(description,text);
+		#end
 	}
 
 	function MusicPlayNote(a:Int,b:Float,c:Float,d:Float){
+		#if js
 		untyped playNote(a,b,c,d);
+		#end
 	}
 
 	var lCounter=0;
@@ -612,7 +619,7 @@ class Main {
 	    if (collide==3){
 	      if (dat.notes.length>1){
 	        dat.notes.splice(i,1);
-	        if (selectedSequence==i){
+	        if (selectedSequence==i && selectedSequence>0){
 	          selectedSequence--;
 	        }
 	        break;
@@ -816,7 +823,12 @@ class Main {
 	  for (c2 in 0...5){
 	    var c = channelOrder[c2];
 	    //    trace(c,c2);
-	    var channel = dat.notes[selectedSequence][c];  
+	    var channel=null;
+	    try{
+	    	channel = dat.notes[selectedSequence][c];  
+		}  catch (msg:String){			
+	    	trace(msg);
+		}
 	    var colIndex = c==selectedInst?1:0;
 	    var col = instCols[c][colIndex];
 	    //    trace(c+","+selectedInst+","+col);
