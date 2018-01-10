@@ -3,7 +3,7 @@
   <set name="startfullscreen" value="false" />
   
 	<meta 
-    title="Simple Mouse Game" 
+    title="tinybox" 
     package="com.haxegon.simplemousegame" 
     version="1.0.0" 
     company="Haxegon" 
@@ -40,12 +40,14 @@
   <haxedef name="windowheight" value="150" />
   <haxedef name="startfullscreen" value="${startfullscreen}" />
 	
+  <dependency name="js/recorder.js" />
   <dependency name="js/rng.js" />
   <dependency name="js/sfxr.js" />
 
-  <template path="js/rng.js" rename="js/rng.js" if="html5" />
+  <template path="js/recorder.js" rename="js/recorder.js" if="html5" />
+<template path="js/rng.js" rename="js/rng.js" if="html5" />
   <template path="js/sfxr.js" rename="js/sfxr.js" if="html5" />
-
+  
 	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
 	<assets path="data/sounds/ogg" rename="data/sounds" unless="flash"/> 
 	<assets path="data/text"/>

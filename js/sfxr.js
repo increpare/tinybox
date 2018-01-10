@@ -13,12 +13,65 @@ var SHAPES = [
   'square', 'sawtooth', 'sine', 'noise', 'triangle', 'breaker'
 ];
 
+
 var AUDIO_CONTEXT;
 
 if (typeof AudioContext != 'undefined') {
   AUDIO_CONTEXT = new AudioContext();
 } else if (typeof webkitAudioContext != 'undefined') {
   AUDIO_CONTEXT = new webkitAudioContext();
+}
+
+var input = AUDIO_CONTEXT.createMediaStreamDestination(AUDIO_CONTEXT.destination);
+
+var recorder = new Recorder(AUDIO_CONTEXT);
+
+
+function  showFile(blob){
+  // It is necessary to create a new blob object with mime-type explicitly set
+  // otherwise only Chrome works like it should
+  var newBlob = new Blob([blob], {type: "audio/x-wav"})
+ 
+  // IE doesn't allow using a blob object directly as link href
+  // instead it is necessary to use msSaveOrOpenBlob
+  if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(newBlob);
+    return;
+  } 
+ 
+  // For other browsers: 
+  // Create a link pointing to the ObjectURL containing the blob.
+  const data = window.URL.createObjectURL(newBlob);
+  var link = document.createElement('a');
+  link.href = data;
+  link.download="music.wav";
+  link.click();
+  setTimeout(function(){
+    window.URL.revokeObjectURL(data);
+  }, 100);
+}
+
+
+  function downloadFile() {
+    recorder && recorder.exportWAV(function(blob) {
+      var url = URL.createObjectURL(blob);
+      showFile(url);
+      window.console.log("generated wav file")
+    });
+  }
+
+function startRecording() {
+  recorder && recorder.record();
+  window.console.log('Recording...');
+}
+
+function stopRecording() {
+  recorder && recorder.stop();
+  window.console.log('Stopped recording...');
+  
+  downloadFile();
+  
+  recorder.clear();
 }
 
 // Playback volume
@@ -1043,3 +1096,11 @@ function playSound(seed,vol) {
   var sound = cacheSeed(seed,vol);
   sound.play();
 }
+
+
+/*
+
+
+
+*/
+

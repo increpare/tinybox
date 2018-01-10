@@ -468,7 +468,7 @@ class Main {
 	          }
 	          if(r<noteDensity){
 	            // a note is [note, length, onset, amplitude]
-	            channel.push([132-12,preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
+	            channel.push([Math.round(24+r*50),preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
 	          }     
 	        }
 	      }
@@ -569,6 +569,18 @@ class Main {
 	    rCounter=0;      
 	  }
 
+
+	  if (Input.justpressed(Key.I)){
+		#if js
+		untyped startRecording();
+		#end
+	  }
+	  
+	  if (Input.justpressed(Key.O)){
+		#if js
+		untyped stopRecording();
+		#end
+	  }
 
 	  if (Input.pressed(Key.PLUS)||Input.pressed(Key.E)){
 	    plusCounter--;
