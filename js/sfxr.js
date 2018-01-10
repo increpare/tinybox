@@ -22,12 +22,25 @@ if (typeof AudioContext != 'undefined') {
   AUDIO_CONTEXT = new webkitAudioContext();
 }
 
-var input = AUDIO_CONTEXT.createMediaStreamDestination(AUDIO_CONTEXT.destination);
 
-var recorder = new Recorder(AUDIO_CONTEXT);
+var filter1 = AUDIO_CONTEXT.createBiquadFilter();
+var filter2 = AUDIO_CONTEXT.createBiquadFilter();
+var filter3 = AUDIO_CONTEXT.createBiquadFilter();
 
 
-function  showFile(blob){
+  filter1.frequency.value = 1600;
+  filter2.frequency.value = 1600;
+  filter3.frequency.value = 1600;
+
+  filter1.connect(filter2);
+  filter2.connect(filter3);
+  filter3.connect(AUDIO_CONTEXT.destination);
+
+//var input = AUDIO_CONTEXT.destination;
+var recorder = new Recorder(filter3);
+
+
+function  showFile(blob,datauri){
   // It is necessary to create a new blob object with mime-type explicitly set
   // otherwise only Chrome works like it should
   var newBlob = new Blob([blob], {type: "audio/x-wav"})
@@ -41,9 +54,9 @@ function  showFile(blob){
  
   // For other browsers: 
   // Create a link pointing to the ObjectURL containing the blob.
-  const data = window.URL.createObjectURL(newBlob);
+  //const data = window.URL.createObjectURL(newBlob);
   var link = document.createElement('a');
-  link.href = data;
+  link.href = datauri;
   link.download="music.wav";
   link.click();
   setTimeout(function(){
@@ -51,13 +64,24 @@ function  showFile(blob){
   }, 100);
 }
 
+function blobToDataURL(blob, callback) {
+    var a = new FileReader();
+    a.onload = function(e) {callback(e.target.result);}
+    a.readAsDataURL(blob);
+}
+
 
   function downloadFile() {
-    recorder && recorder.exportWAV(function(blob) {
-      var url = URL.createObjectURL(blob);
-      showFile(url);
-      window.console.log("generated wav file")
-    });
+    recorder && recorder.exportWAV( 
+      function(blob) {
+        blobToDataURL(blob, 
+          function(datauri){
+            showFile(blob,datauri);
+            window.console.log("generated wav file\n"+datauri)
+          }
+        )
+      }
+    )      
   }
 
 function startRecording() {
@@ -650,21 +674,12 @@ SoundEffect.prototype.getBuffer = function() {
 
 
 SoundEffect.prototype.play = function() {
-  var source = AUDIO_CONTEXT.createBufferSource();
-  var filter1 = AUDIO_CONTEXT.createBiquadFilter();
-  var filter2 = AUDIO_CONTEXT.createBiquadFilter();
-  var filter3 = AUDIO_CONTEXT.createBiquadFilter();
 
+  var source = AUDIO_CONTEXT.createBufferSource();
   source.buffer = this._buffer;
+
   source.connect(filter1);
 
-  filter1.frequency.value = 1600;
-  filter2.frequency.value = 1600;
-  filter3.frequency.value = 1600;
-
-  filter1.connect(filter2);
-  filter2.connect(filter3);
-  filter3.connect(AUDIO_CONTEXT.destination);
   var t = AUDIO_CONTEXT.currentTime;
   if (typeof source.start != 'undefined') {
     source.start(t);
