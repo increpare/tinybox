@@ -23,21 +23,24 @@ if (typeof AudioContext != 'undefined') {
 }
 
 
+var filter4 = AUDIO_CONTEXT.createGain();
+
+
+
 var filter1 = AUDIO_CONTEXT.createBiquadFilter();
 var filter2 = AUDIO_CONTEXT.createBiquadFilter();
 var filter3 = AUDIO_CONTEXT.createBiquadFilter();
+filter1.frequency.value = 800;
+filter2.frequency.value = 800;
+filter3.frequency.value = 800;
 
-
-  filter1.frequency.value = 1600;
-  filter2.frequency.value = 1600;
-  filter3.frequency.value = 1600;
-
-  filter1.connect(filter2);
-  filter2.connect(filter3);
-  filter3.connect(AUDIO_CONTEXT.destination);
+filter1.connect(filter2);
+filter2.connect(filter3);
+filter3.connect(filter4);
+filter4.connect(AUDIO_CONTEXT.destination);
 
 //var input = AUDIO_CONTEXT.destination;
-var recorder = new Recorder(filter3);
+var recorder = new Recorder(filter4);
 
 
 function  showFile(blob,datauri){

@@ -5,7 +5,8 @@ import js.Browser;
 #end
 
 class Main {
-	
+
+	var EXPORTMODE = false;
 	var charWidth =5;
 
 	var mainButton = 0x0000ff;
@@ -468,7 +469,7 @@ class Main {
 	          }
 	          if(r<noteDensity){
 	            // a note is [note, length, onset, amplitude]
-	            channel.push([Math.round(24+r*50),preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
+	            channel.push([Math.round(r*200),preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
 	          }     
 	        }
 	      }
@@ -508,7 +509,75 @@ class Main {
 	}
 
 
+	function doExportPanel(){
+	  Gfx.clearscreen(backgroundCol);
+	  if (Input.justpressed(Key.SPACE)||Input.justpressed(Key.H)||Input.justpressed(Key.ESCAPE)||Mouse.leftclick()){
+	    helpmode=false;
+	  }
+	  Text.size=2.5;
+	  var titleTop=20;
+
+	  var pc = Math.floor( (100*playTick)/(dat.notes.length*dat.patternLength*dat.cellDuration) );
+	  Text.display(Text.CENTER,50,"EXPORTING");
+	  Text.display(Text.CENTER,70,pc+"%");
+	  Text.size=1;
+
+	}
+
+
+	function startExport(){
+		selectedSequence=0;
+		EXPORTMODE=true;
+
+		#if js
+		untyped startRecording();
+		#end
+
+		startPlay();
+	}
+
+
+	function audioUpdate(){
+		if (!playing){
+			return;
+		}
+		
+
+
+		playTick++;    
+	    var pieceLengthInTicks = dat.notes.length*dat.patternLength*dat.cellDuration;
+
+	    if (EXPORTMODE){
+	    	if (playTick==pieceLengthInTicks){
+	    		stopPlay();
+
+				#if js
+				untyped stopRecording();
+				#end
+
+				EXPORTMODE=false;
+				return;
+	    	}
+	    }
+	    playTick = playTick%pieceLengthInTicks;
+	    
+	    var globalCell = Convert.toint(playTick/dat.cellDuration);
+	    var playPattern = Convert.toint(globalCell/dat.patternLength);
+	    selectedSequence=playPattern;
+	    var patternProgress = globalCell-dat.patternLength*playPattern;
+
+	    if (playTick%dat.cellDuration==0){
+	      TryPlayNote(patternProgress);
+	    }
+
+	}
 	function update() {
+		if (EXPORTMODE){
+			audioUpdate();
+			doExportPanel();
+			return;
+		}
+
 	  if (helpmode){
 	    doHelp();
 	    return;
@@ -569,7 +638,7 @@ class Main {
 	    rCounter=0;      
 	  }
 
-
+/*
 	  if (Input.justpressed(Key.I)){
 		#if js
 		untyped startRecording();
@@ -580,7 +649,7 @@ class Main {
 		#if js
 		untyped stopRecording();
 		#end
-	  }
+	  }*/
 
 	  if (Input.pressed(Key.PLUS)||Input.pressed(Key.E)){
 	    plusCounter--;
@@ -791,7 +860,12 @@ class Main {
 	    if (ld!=null&&ld.length>0){loadDat(ld);}
 	  }
 
-	  if (drawButton("help   ",buttonx,buttonYOffset+buttonStep*8+10,textCol,mainButton,mainHighlight)){
+
+	  if (drawButton("export ",buttonx,buttonYOffset+buttonStep*8,textCol,mainButton,mainHighlight)){
+	    startExport();
+	  }
+
+	  if (drawButton("help   ",buttonx,buttonYOffset+buttonStep*9+10,textCol,mainButton,mainHighlight)){
 	    helpmode=true;
 	  }
 	  //draw grid
@@ -959,21 +1033,14 @@ class Main {
 	  Text.display(2,4,"tinybox music editor",Col.DARKBROWN);
 
 
+	  
+	  audioUpdate();
+
 	  if (playing){
-	    playTick++;    
-	    var pieceLengthInTicks = dat.notes.length*dat.patternLength*dat.cellDuration;
-	    playTick = playTick%pieceLengthInTicks;
-	    var globalCell = Convert.toint(playTick/dat.cellDuration);
-	    var playPattern = Convert.toint(globalCell/dat.patternLength);
-	    selectedSequence=playPattern;
-	    var patternProgress = globalCell-dat.patternLength*playPattern;
-
-	    if (playTick%dat.cellDuration==0){
-	      TryPlayNote(patternProgress);
-	    }
-
+		var globalCell = Convert.toint(playTick/dat.cellDuration);
+	    var playPattern = Convert.toint(globalCell/dat.patternLength);	    
+	  	var patternProgress = globalCell-dat.patternLength*playPattern;
 	    Gfx.fillbox(gx+cellWidth*patternProgress,gy,1,gy*cellHeight,Col.WHITE);
-
 	  }
 
 	}
