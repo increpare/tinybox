@@ -30,9 +30,9 @@ var filter4 = AUDIO_CONTEXT.createGain();
 var filter1 = AUDIO_CONTEXT.createBiquadFilter();
 var filter2 = AUDIO_CONTEXT.createBiquadFilter();
 var filter3 = AUDIO_CONTEXT.createBiquadFilter();
-filter1.frequency.value = 800;
-filter2.frequency.value = 800;
-filter3.frequency.value = 800;
+filter1.frequency.value = 1600;
+filter2.frequency.value = 1600;
+filter3.frequency.value = 1600;
 
 filter1.connect(filter2);
 filter2.connect(filter3);
