@@ -281,8 +281,12 @@ class Main {
 	  }
 	}
 
-	function drawButton(text,x,y,textcolor,color,colorhover) {
+	function drawButton(text,x,y,textcolor,color,colorhover,returnhoverstatus=false) {
 	  var width=35;
+	  var w = Math.round(Text.width(text));
+	  if (w+8>=width){
+	  	width=w+8;
+	  }
 	  var height=9;
 	  var dx = Mouse.x-x;
 	  var dy = Mouse.y-y;
@@ -296,6 +300,10 @@ class Main {
 	  }
 	  Gfx.fillbox(x,y,width,height,color);
 	  Text.display(x+4, y+2, text, textcolor);
+	  
+	  if (returnhoverstatus==true){
+	  	click=collide;
+	  }
 	  return click;
 	}
 
@@ -394,6 +402,9 @@ class Main {
 
 
 	function DecreasePatternLength(){
+		if (dat.patternLength==1){
+			return;
+		}
 	  dat.patternLength--;
 	  trace("boops");
 
@@ -469,7 +480,7 @@ class Main {
 	          }
 	          if(r<noteDensity){
 	            // a note is [note, length, onset, amplitude]
-	            channel.push([Math.round(r*200),preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
+	            channel.push([Random.int(1,120),preferredLengths[j],Random.int(1,maxOnset),Random.int(1,7)]);
 	          }     
 	        }
 	      }
@@ -487,6 +498,9 @@ class Main {
 
 	var helpmode=false;
 
+	var overLink1:Int = 0;
+	var overLink2:Int = 0;
+
 	function doHelp(){
 	  Gfx.clearscreen(backgroundCol);
 	  if (Input.justpressed(Key.SPACE)||Input.justpressed(Key.H)||Input.justpressed(Key.ESCAPE)||Mouse.leftclick()){
@@ -496,6 +510,21 @@ class Main {
 	  var titleTop=20;
 	  Text.display(Text.CENTER,10,"tinybox");
 	  Text.size=1;
+
+
+	 var linkButton = 0x880088;
+	 var linkHighlight = 0x885588;
+
+	if (drawButton("increpare.com",3,12,textCol,linkButton,linkHighlight,true)){
+		overLink1 = 5;
+	}
+
+
+	var rposx:Int = Gfx.screenwidth-3-Math.round(Text.width("  patreon   "))-8;
+	if (drawButton("  patreon   ",rposx,12,textCol,linkButton,linkHighlight,true)){
+		overLink2 = 5;
+	}
+
 	  var i=0;
 	  var textTop=titleTop+15;
 	  Text.display(3,textTop+13*(i++),"Shortcuts:");
@@ -572,11 +601,16 @@ class Main {
 
 	}
 	function update() {
+
+		overLink1--;
+	  	overLink2--;
+	  
 		if (EXPORTMODE){
 			audioUpdate();
 			doExportPanel();
 			return;
 		}
+
 
 	  if (helpmode){
 	    doHelp();
@@ -604,11 +638,11 @@ class Main {
 	      startPlay();
 	    }
 	  }
-	  if ((Input.pressed(Key.DOWN)||Input.pressed(Key.S))&&bottomNote>0){
+	  if ((Input.pressed(Key.DOWN)||Input.pressed(Key.S)||Mouse.mousewheel<-0.5)&&bottomNote>0){
 	    bottomNote--;
 	  }
 
-	  if ((Input.pressed(Key.UP)||Input.pressed(Key.W))&&bottomNote<132-24){
+	  if ((Input.pressed(Key.UP)||Input.pressed(Key.W)||Mouse.mousewheel>0.5)&&bottomNote<132-24){
 	    bottomNote++;
 	  }
 
@@ -1005,6 +1039,7 @@ class Main {
 	      if (oldAddX>=0){
 	        blockNote(oldAddX,oldAddY);
 	      }
+
 	      var newNote=[clickY,l,clickX,noteVol];
 	      dat.notes[selectedSequence][selectedInst].push(newNote);
 	      if (Mouse.leftclick()){
@@ -1114,8 +1149,22 @@ class Main {
 	function new(){
 
 		#if js
-		untyped {
-			document.oncontextmenu = document.body.oncontextmenu = function() {return false;}
+		 {
+			Browser.document.oncontextmenu = Browser.document.body.oncontextmenu = function() {return false;}
+
+			Browser.document.addEventListener("click", function( event ) {
+				if (this.overLink1>0)
+				{
+					Browser.window.open("https://www.increpare.com","_blank");
+					this.overLink1=0;
+				}
+				if (this.overLink2>0){
+					Browser.window.open("https://www.patreon.com/increpare","_blank");
+					this.overLink2=0;
+				}
+    			// display the current click count inside the clicked div
+    			event.target.textContent = "click count: " + event.detail;
+  			}, false);
 		}
 		#end
 

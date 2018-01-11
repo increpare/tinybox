@@ -4,7 +4,7 @@
   
 	<meta 
     title="tinybox" 
-    package="com.haxegon.simplemousegame" 
+    package="com.haxegon.tinybox" 
     version="1.0.0" 
     company="Haxegon" 
   />
@@ -13,11 +13,12 @@
 	<app 
       main="haxegon.Load"
       path="bin" 
-      file="simplemousegame" 
+      file="tinybox" 
    />
 
 	<window
       width="${windowwidth}" height="${windowheight}" unless="mobile" 
+      allow-high-dpi="true" 
    ></window>
    
 	<window
@@ -47,6 +48,7 @@
   <template path="js/recorder.js" rename="js/recorder.js" if="html5" />
 <template path="js/rng.js" rename="js/rng.js" if="html5" />
   <template path="js/sfxr.js" rename="js/sfxr.js" if="html5" />
+  <template path="html/html_template.html" rename="index.html" />
   
 	<assets path="data/sounds/mp3" rename="data/sounds" if="flash"/> 
 	<assets path="data/sounds/ogg" rename="data/sounds" unless="flash"/> 
