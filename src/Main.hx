@@ -32,9 +32,9 @@ class Main {
 	  [0x008800,0x55ff55]
 	];
 
-	var blackNotes = [false,true,false,true,false,false,true,false,true,false,true,false];
+	var blackNotes = [false,false,true,false,true,false,false,true,false,true,false,true];
 
-	var notenames=["c","c#","d","d#","e","f","f#","g","g#","a","a#","b"];
+	var notenames=["c#","d","d#","e","f","f#","g","g#","a","a#","b","c"];
 	/*
 	FILE
 	patternLength : [1-16]
@@ -252,7 +252,7 @@ class Main {
 	var maxVol =9;
 	var noteVol =9;//maxVol
 	var selectedSequence =0;
-	var bottomNote=60;
+	var bottomNote=59;
 
 	var backups=[];
 	function MakeBackupCopy(){
@@ -900,8 +900,8 @@ class Main {
 	  Gfx.fillbox(gx,gy,xCells*(cellWidth)+1,yCells*(cellHeight)+1,panelCol);
 
 
-	  var octaveDisplay = Math.floor((bottomNote+11)/12);
-	  var cNotePos = ((bottomNote+11)%12);
+	  var octaveDisplay = Math.floor((bottomNote)/12);
+	  var cNotePos = ((bottomNote)%12);
 	  //  trace((gx-5)+","+(gy+cellHeight*cNotePos)+","+octaveDisplay);
 	  if (octaveDisplay>9){
 	    Text.display(gx-11,gy+cellHeight*(cNotePos)+3,Convert.tostring(octaveDisplay));
@@ -911,7 +911,7 @@ class Main {
 	  for (i in 0...12){
 	    Text.display(gx-8,gy+cellHeight*(i)+3,notenames[(bottomNote+11-i)%12],Col.GREY);
 	  }
-	  if (octaveDisplay>0){
+	  if (octaveDisplay>=0){
 	    Gfx.fillbox(gx-8,gy+cellHeight*(cNotePos+1),xCells*cellWidth+8,1,0x555555);
 	  }
 	  for (i in 0 ... xCells){
