@@ -1,4 +1,5 @@
 import haxegon.*;
+import std.*;
 
 #if js
 import js.Browser;
@@ -153,11 +154,12 @@ class Main {
 	  intArray.push(dat.patternLength);
 	  intArray.push(dat.cellDuration);
 	  for ( i in 0...5){
-	    var n = dat.instruments[i];
+	  	var n = dat.instruments[i];
+	    trace("N " +n);
 	    for ( j in 0...5){
 	      var p1 = Math.pow(62,j);
-	      var v = Convert.toint(n/p1)%62;
-	      intArray.push(v);
+	      var v = Std.int(n/p1)%62;
+	      intArray.push(v); 
 	    }
 	  }
 
@@ -184,13 +186,11 @@ class Main {
 	  for( n in intArray){
 	    result = result+B62[n];    
 	  }
-
 	  result = makeRLE(result);
 	  return result;
 	}
 
-	function makeRLE(s:String):String{
-
+	function makeRLE(s:String):String {
 	  var result ="";
 	  var lastChar=s.charAt(0);
 	  var lastCharCount=1;
@@ -398,8 +398,7 @@ class Main {
 			return;
 		}
 	  dat.patternLength--;
-	  trace("boops");
-
+	  
 	  for (sequence in dat.notes){
 	    for (channel in sequence){
 	      for (i in 1-channel.length...1){
@@ -779,8 +778,7 @@ class Main {
 	    dat.patternLength++;      
 	  } 
 	  if (collide==3&&dat.patternLength>0){
-	    trace(collide);
-
+	    
 	    DecreasePatternLength();
 	  }
 	    
@@ -820,7 +818,6 @@ class Main {
 	    if (c==3){
 	      MakeBackupCopy();
 	      dat.instruments[k]=Random.int(0,99999999);
-	      trace(dat.instruments[k]);
 	      MusicPlayNote(dat.instruments[k],1,1,1.0);
 	    }
 	    {
@@ -832,7 +829,6 @@ class Main {
 	      var n = getNum();
 	      if (n>=0){
 	        dat.instruments[k]=((dat.instruments[k]*10) % 100000000)+n;
-	        trace(dat.instruments[k]);
 	      }
 	      if (Input.justpressed(Key.BACKSPACE)){
 	        dat.instruments[k]=0;
@@ -882,7 +878,6 @@ class Main {
 
 	  if (drawButton("load   ",buttonx,buttonYOffset+buttonStep*7,textCol,mainButton,mainHighlight)){
 	    var ld = GamePrompt("Enter music data string:","");
-	    trace(ld);
 	    if (ld!=null&&ld.length>0){loadDat(ld);}
 	  }
 
