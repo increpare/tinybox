@@ -73,15 +73,7 @@ class Main {
 	var oldAddX=-1;
 	var oldAddY=-1;
 	function stripWhitespace(s){
-	  var result="";
-	  for(i in 0...s.length){
-	    var c = s.charAt(i);
-	    if (c==" "||c=="\t"||c=="\n"){
-	      continue;
-	    }
-	    result+=c;
-	  }
-	  return result;
+		return StringTools.trim(s);
 	}
 	function loadDat(s){
 	  s = stripWhitespace(s);
